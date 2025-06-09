@@ -1,0 +1,983 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Rivera Construction & Hardscapes LLC offers expert construction and hardscaping services in Lebanon, CT. Get a free estimate for home renovations, patios, and more.">
+    <meta name="keywords" content="construction, hardscaping, Lebanon CT, home renovations, paver patios, roofing, siding, decks">
+    <meta name="author" content="Rivera Construction & Hardscapes LLC">
+    <meta property="og:title" content="Rivera Construction & Hardscapes LLC | Lebanon, CT">
+    <meta property="og:description" content="Transform your home with our expert construction and hardscaping services. Serving Lebanon, CT and surrounding areas.">
+    <meta property="og:image" content="https://i.imgur.com/rE5a8vK.png">
+    <meta property="og:url" content="https://www.rivera1.com">
+    <meta property="og:type" content="website">
+    <title>Rivera Construction & Hardscapes LLC | Lebanon, CT</title>
+    <link rel="icon" href="https://i.imgur.com/rE5a8vK.png" type="image/png">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Oswald:wght@700&display=swap" as="style" onload="this.rel='stylesheet'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color-red: #d32f2f;
+            --text-color: #ecf0f1;
+            --background-color: #ffffff;
+            --card-bg-color: #f8f9fa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        .main-header {
+            background: linear-gradient(90deg, rgba(44, 62, 80, 0.95), rgba(52, 73, 94, 0.95));
+            color: var(--text-color);
+            padding: 1.2rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .main-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-header .logo {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2rem;
+            color: var(--text-color);
+            text-decoration: none;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        .main-nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            font-weight: 700;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .main-nav a:hover, .main-nav a:focus {
+            color: var(--accent-color-red);
+            transform: scale(1.1);
+            outline: none;
+        }
+
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.pexels.com/photos/2219024/pexels-photo-2219024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1') no-repeat center center/cover;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.5) 100%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 4.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: slideInDown 1s ease-out;
+        }
+
+        .hero p {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--accent-color-red);
+            color: var(--text-color);
+            padding: 1.2rem 2.5rem;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover, .cta-button:focus {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            outline: none;
+        }
+
+        .section {
+            padding: 7rem 0;
+            position: relative;
+            background: linear-gradient(180deg, var(--background-color), var(--card-bg-color));
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: 'Oswald', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .section-divider {
+            height: 6px;
+            width: 100px;
+            background: var(--accent-color-red);
+            margin: 0 auto 3rem;
+            animation: pulse 2s infinite;
+        }
+
+        #about {
+            background: linear-gradient(180deg, var(--card-bg-color), #e9ecef);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-image img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s, filter 0.3s;
+            loading: lazy;
+        }
+
+        .about-image img:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        .about-text p {
+            font-size: 1.2rem;
+            text-align: left;
+            color: var(--primary-color);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: var(--card-bg-color);
+            text-align: center;
+            padding: 3rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+            cursor: pointer;
+        }
+
+        .service-card:hover, .service-card:focus {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+            background: linear-gradient(45deg, var(--card-bg-color), #ffffff);
+        }
+
+        .service-card .icon {
+            font-size: 3.5rem;
+            color: var(--accent-color-red);
+            margin-bottom: 1rem;
+            transition: color 0.3s;
+        }
+
+        .service-card:hover .icon, .service-card:focus .icon {
+            color: #b71c1c;
+        }
+
+        .service-card h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        #portfolio {
+            background: var(--background-color);
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .portfolio-item {
+            background: var(--card-bg-color);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .portfolio-item:hover, .portfolio-item:focus {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s;
+            loading: lazy;
+        }
+
+        .portfolio-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .portfolio-caption {
+            padding: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        #testimonials {
+            background: linear-gradient(180deg, var(--secondary-color), #2c3e50);
+            color: var(--text-color);
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: var(--primary-color);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border-left: 6px solid var(--accent-color-red);
+            transition: transform 0.3s;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .testimonial-card p {
+            font-style: italic;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .testimonial-card footer {
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .stars {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 1.8rem;
+            color: #f1c40f;
+        }
+
+        .stars a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .stars a:hover {
+            color: var(--accent-color-red);
+        }
+
+        #service-area {
+            background: linear-gradient(180deg, var(--card-bg-color), #e9ecef);
+        }
+
+        .area-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            list-style: none;
+        }
+
+        .area-list li {
+            background: var(--accent-color-red);
+            color: var(--text-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 700;
+            transition: transform 0.3s;
+        }
+
+        .area-list li:hover {
+            transform: scale(1.1);
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .contact-info a {
+            color: var(--accent-color-red);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-info a:hover {
+            color: #b71c1c;
+        }
+
+        .contact-info .info-item {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .contact-info .info-item i {
+            margin-right: 10px;
+            color: var(--accent-color-red);
+            width: 20px;
+            transition: color 0.3s;
+        }
+
+        .contact-info .info-item:hover i {
+            color: #b71c1c;
+        }
+
+        .contact-form label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: var(--accent-color-red);
+            box-shadow: 0 0 8px rgba(211, 47, 47, 0.3);
+            outline: none;
+        }
+
+        .contact-form .btn-submit {
+            width: 100%;
+            background: var(--accent-color-red);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .contact-form .btn-submit:hover, .contact-form .btn-submit:focus {
+            background: #b71c1c;
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .main-footer {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            padding: 2.5rem 0;
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 40px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--accent-color-red);
+        }
+
+        #modal-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        #modal-description {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            color: var(--primary-color);
+        }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            60% { opacity: 1; transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .animated {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .animated.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        @media(max-width: 768px) {
+            .main-header .container {
+                flex-direction: column;
+            }
+            .main-nav ul {
+                padding-top: 1rem;
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero h1 {
+                font-size: 3rem;
+            }
+            .hero p {
+                font-size: 1.4rem;
+            }
+            .about-content, .contact-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .about-text p {
+                text-align: center;
+            }
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+            .modal-content {
+                width: 90%;
+            }
+            .section-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header" role="banner">
+        <div class="container">
+            <a href="#" class="logo" aria-label="Rivera Construction & Hardscapes Home">Rivera Construction & Hardscapes</a>
+            <nav class="main-nav" role="navigation" aria-label="Main navigation">
+                <ul>
+                    <li><a href="#about" aria-current="page">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#portfolio">Portfolio</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero" role="region" aria-label="Hero section">
+            <div class="hero-content">
+                <h1>Rivera Construction & Hardscapes LLC</h1>
+                <p>Turning Your Vision Into Reality</p>
+                <a href="#contact" class="cta-button" aria-label="Get a free estimate">Get a Free Estimate</a>
+            </div>
+            <canvas id="particleCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"></canvas>
+        </section>
+
+        <section id="about" class="section" role="region" aria-label="About section">
+            <div class="container">
+                <h2 class="section-title">About Us</h2>
+                <div class="section-divider"></div>
+                <div class="about-content">
+                    <div class="about-image animated">
+                        <img src="https://scontent-bos5-1.xx.fbcdn.net/v/t39.30808-6/480962736_1258793615976047_3177621057061266517_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=fip893Jz9xoQ7kNvwGlPDsY&_nc_oc=Adl9P0l9DRIoBdHRxgNO8GUHO0Sc0vJuVhj2XesY0B3Q0dZvqI3eBeQto97MNnbrWy4RaaceINqbqnAMXrO44tyh&_nc_zt=23&_nc_ht=scontent-bos5-1.xx&_nc_gid=H7B2CB-XSru5oOLDkVmnVw&oh=00_AfODohqGSh3HcFCUP1asobyz99TXbCYjnLMVt0JljR7-Eg&oe=684D409F" alt="Rivera Construction & Hardscapes Team at work" loading="lazy">
+                    </div>
+                    <div class="about-text animated">
+                        <p>Rivera Construction & Hardscapes LLC is a full-service construction and hardscaping company based in Lebanon, CT. We are dedicated to providing the highest quality craftsmanship and exceptional customer service. Our team is committed to turning your vision into a reality, ensuring a fast, efficient, and stress-free experience from start to finish. We pride ourselves on our reliability, attention to detail, and creating beautiful, lasting spaces for our clients.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="section" role="region" aria-label="Services section">
+            <div class="container">
+                <h2 class="section-title">Our Services</h2>
+                <div class="section-divider"></div>
+                <div class="services-grid">
+                    <div class="service-card animated" tabindex="0" role="button" data-title="Full Home Renovations" data-description="Our full home renovation service encompasses a complete overhaul of your property. From initial design and architectural planning to the final coat of paint, we manage every aspect to create a cohesive, modern, and highly functional living space tailored precisely to your lifestyle and preferences.">
+                        <div class="icon"><i class="fas fa-home" aria-hidden="true"></i></div>
+                        <h3>Full Home Renovations</h3>
+                        <p>Complete transformations that breathe new life into your entire home.</p>
+                    </div>
+                    <div class="service-card animated" tabindex="0" role="button" data-title="Kitchen & Bathroom Remodeling" data-description="We specialize in transforming kitchens and bathrooms into stunning, practical spaces. Whether you desire a gourmet kitchen with custom cabinetry and quartz countertops or a spa-like bathroom retreat, our team delivers high-end finishes and flawless installations.">
+                        <div class="icon"><i class="fas fa-utensils" aria-hidden="true"></i></div>
+                        <h3>Kitchen & Bathroom Remodeling</h3>
+                        <p>Modernize the most important rooms in your house for beauty and function.</p>
+                    </div>
+                    <div class="service-card animated" tabindex="0" role="button" data-title="Home Additions & Decks" data-description="Need more space? Our home addition services provide seamless integration with your existing structure. We also design and build custom decks from wood or composite materials, creating the perfect outdoor area for relaxation and entertainment.">
+                        <div class="icon"><i class="fas fa-door-open" aria-hidden="true"></i></div>
+                        <h3>Home Additions & Decks</h3>
+                        <p>Expand your living space with seamless additions and beautiful custom decks.</p>
+                    </div>
+                    <div class="service-card animated" tabindex="0" role="button" data-title="Roofing & Siding Installation" data-description="Protect your home's integrity and boost its curb appeal with our expert roofing and siding services. We use top-quality materials from trusted manufacturers to ensure your home is shielded from the elements and looks its best for years to come.">
+                        <div class="icon"><i class="fas fa-hard-hat" aria-hidden="true"></i></div>
+                        <h3>Roofing & Siding Installation</h3>
+                        <p>Protect and beautify your home with durable, high-quality materials.</p>
+                    </div>
+                    <div class="service-card animated" tabindex="0" role="button" data-title="Drywall, Painting & Framing" data-description="The foundation of any beautiful interior is expert finishing. Our services include precise framing, seamless drywall installation and finishing, and professional interior and exterior painting for a crisp, clean, and polished look.">
+                        <div class="icon"><i class="fas fa-ruler-combined" aria-hidden="true"></i></div>
+                        <h3>Drywall, Painting & Framing</h3>
+                        <p>Precision and quality finishing for the interior structure of your home.</p>
+                    </div>
+                    <div class="service-card animated" tabindex="0" role="button" data-title="Paver Patios & Walkways" data-description="Enhance your outdoor living with our custom-designed paver patios and walkways. We offer a wide variety of materials, including concrete, brick, and natural stone, to create durable and aesthetically pleasing surfaces that complement your landscape.">
+                        <div class="icon"><i class="fas fa-road" aria-hidden="true"></i></div>
+                        <h3>Paver Patios & Walkways</h3>
+                        <p>Elegant and durable paver, brick, or concrete installations.</p>
+                    </div>
+                    <div class="service-card animated" tabindex="0" role="button" data-title="Garden & Retaining Walls" data-description="Our expertly constructed garden and retaining walls are both beautiful and functional. Using materials like block, stone, or concrete, we can solve erosion issues, create terraced gardens, and add striking visual elements to your property.">
+                        <div class="icon"><i class="fas fa-layer-group" aria-hidden="true"></i></div>
+                        <h3>Garden & Retaining Walls</h3>
+                        <p>Functional and aesthetic walls using block, stone, or concrete.</p>
+                    </div>
+                    <div class="service-card animated" tabindex="0" role="button" data-title="Stone Walls, Firepits & Steps" data-description="Add timeless character to your landscape with custom stonework. We build classic New England stone walls, cozy firepits for evening gatherings, and elegant stone steps, all meticulously crafted to elevate your outdoor space.">
+                        <div class="icon"><i class="fas fa-fire" aria-hidden="true"></i></div>
+                        <h3>Stone Walls, Firepits & Steps</h3>
+                        <p>Custom-built stone features to enhance your outdoor living space.</p>
+                    </div>
+                    <div class="service-card animated" tabindex="0" role="button" data-title="Excavation, Grading, Leveling" data-description="Proper site preparation is crucial for any successful construction project. Our comprehensive excavation, grading, and leveling services ensure a stable and appropriate foundation, preventing future issues with drainage and structural integrity.">
+                        <div class="icon"><i class="fas fa-tractor" aria-hidden="true"></i></div>
+                        <h3>Excavation, Grading, Leveling</h3>
+                        <p>Expert site preparation for a flawless foundation for any project.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="section" role="region" aria-label="Portfolio section">
+            <div class="container">
+                <h2 class="section-title">Our Work</h2>
+                <div class="section-divider"></div>
+                <div class="portfolio-grid">
+                    <div class="portfolio-item animated">
+                        <img src="https://scontent-bos5-1.xx.fbcdn.net/v/t39.30808-6/487273734_1283395896849152_1937414422845128097_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=RYqGOeDbYVMQ7kNvwEf3Pmf&_nc_oc=AdnifC_zXgzLzG_17hXIBUam_WsaMO9UyPGWJFfu6CJYzfjHsL74YcVSl68LiPEljl7fiQiCVL1DFU-9OwKztiLx&_nc_zt=23&_nc_ht=scontent-bos5-1.xx&_nc_gid=33YpQ2j-E4qYpStnZxVORA&oh=00_AfNg1frX0zMTzCuG-xpPS3SpdPGcfW1_GYiWZRePN5jTPA&oe=684D1D53" alt="Custom Stone Patio and Firepit" loading="lazy">
+                        <div class="portfolio-caption">Custom Stone Patio & Firepit</div>
+                    </div>
+                    <div class="portfolio-item animated">
+                        <img src="https://scontent-bos5-1.xx.fbcdn.net/v/t39.30808-6/487397221_1283395520182523_4790070498078255303_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_ohc=lcCPP_wTyoIQ7kNvwHNVAbg&_nc_oc=AdlZ-FJb0KCIsLiXpp-CAp_oEXm-PeF7qkPJdWuergxlh11Ale4BKQ5hoLIcRPxwn0ozHvGjcLuTiOp9qTRr_ur5&_nc_zt=23&_nc_ht=scontent-bos5-1.xx&_nc_gid=ztMv_Tl-sYO702tUIgjGtA&oh=00_AfMzvqntCguflcsZ_-RFTiDpRDJZ4QCT2Y9c9xVkyvvp-Q&oe=684D24F2" alt="Modern Paver Walkway" loading="lazy">
+                        <div class="portfolio-caption">Modern Paver Walkway</div>
+                    </div>
+                    <div class="portfolio-item animated">
+                        <img src="https://scontent-bos5-1.xx.fbcdn.net/v/t39.30808-6/487370367_1283395480182527_5950075733268774774_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=127cfc&_nc_ohc=cA_dogGEPk4Q7kNvwG2jI7J&_nc_oc=AdmPnH0_9aDG6u9hWDyagqzVFvXQCjqH8ODkgaCoZhOVOAH8PkodaRhUYwbBspBxUNN3LidKC4nAnQJUWv-JYRaL&_nc_zt=23&_nc_ht=scontent-bos5-1.xx&_nc_gid=7O2iXl3JwTBHuSpqo5jmTg&oh=00_AfOqkJQxhtd2NY-9SGXe_C92dWHc_Ptf62JA4GFY-iQEmg&oe=684D0CA5" alt="Backyard Hardscape with Retaining Wall" loading="lazy">
+                        <div class="portfolio-caption">Backyard Hardscape with Retaining Wall</div>
+                    </div>
+                    <div class="portfolio-item animated">
+                        <img src="https://scontent-bos5-1.xx.fbcdn.net/v/t39.30808-6/487493587_1283395863515822_1068501443069243072_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=OxYWhWyhYJQQ7kNvwFRUtCh&_nc_oc=Adm0rj_7PbgYWVho8-b9nSyZcuumwcn3NwUsbGC4qNkQ68AqNDk08-oHsSMtl4b40QKPEvYvy6OED1Vj6KXSoScG&_nc_zt=23&_nc_ht=scontent-bos5-1.xx&_nc_gid=0QHsIfKY56VhwKovyLV7NQ&oh=00_AfOaRh_P6OboEX2kWt1qjQfuWjpmdEY9P36quS33YoiFzg&oe=684D107E" alt="Elegant Stone Steps" loading="lazy">
+                        <div class="portfolio-caption">Elegant Stone Steps</div>
+                    </div>
+                    <div class="portfolio-item animated">
+                        <img src="https://scontent-bos5-1.xx.fbcdn.net/v/t39.30808-6/487781696_1283395826849159_3728584598868002028_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=ew6CxtkwMlkQ7kNvwGNuKbp&_nc_oc=AdmbgZNW2getsshJKAg6uOxxJVRd8-o-EdcjNXtjNPLdgU0ifHCPA6t7P6poEAksvJMCsG62CrAZ4XK6n9E3noMP&_nc_zt=23&_nc_ht=scontent-bos5-1.xx&_nc_gid=LZCCXuBDltj9LIV29Ygzpg&oh=00_AfNofFLUK7CmyqLHAPk_PRViH6qOQRUAZi9eSKSsEGNifw&oe=684D302C" alt="Paver Patio with Outdoor Seating" loading="lazy">
+                        <div class="portfolio-caption">Paver Patio with Outdoor Seating</div>
+                    </div>
+                    <div class="portfolio-item animated">
+                        <img src="https://scontent-bos5-1.xx.fbcdn.net/v/t39.30808-6/487448443_1283395850182490_1101720905352576723_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=e1Urv8yW3NQQ7kNvwFwb1P5&_nc_oc=AdkGhBBZb-uUnMmdE-oTHdKHgqmfzeMIgyD1fJvLiT4HXui4eMbSsTcw6Cg7dKFg6K0DAwTeUlb_E6p9seDFisB1&_nc_zt=23&_nc_ht=scontent-bos5-1.xx&_nc_gid=__wNfOGxnrC28QIEJDpsvQ&oh=00_AfMSJtDHf3-VQP5EBjuvPTFcHt2Z9tAITgDIlo3FYhEWiw&oe=684D2D27" alt="Landscaped Garden Wall" loading="lazy">
+                        <div class="portfolio-caption">Landscaped Garden Wall</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="section" role="region" aria-label="Testimonials section">
+            <div class="container">
+                <h2 class="section-title" style="color: var(--text-color);">What Our Clients Say</h2>
+                <div class="section-divider"></div>
+                <div class="testimonial-grid">
+                    <div class="testimonial-card animated">
+                        <p>"Oscar helped us with the vision. Let the summer parties begin!"</p>
+                        <footer>- Christine D</footer>
+                    </div>
+                    <div class="testimonial-card animated">
+                        <p>"Prompt, reliable, and kind workers. Impeccable work."</p>
+                        <footer>- Debra D</footer>
+                    </div>
+                    <div class="testimonial-card animated">
+                        <p>"Flawless shed delivery. Honest people. Great job."</p>
+                        <footer>- Harvey C</footer>
+                    </div>
+                </div>
+                <div class="stars animated">
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                    <i class="fas fa-star-half-alt" aria-hidden="true"></i>
+                    <p>4.5/5 stars from <a href="https://www.facebook.com/rivera1.co" target="_blank" rel="noopener noreferrer">Facebook</a></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="service-area" class="section" role="region" aria-label="Service area section">
+            <div class="container">
+                <h2 class="section-title">Serving Our Community</h2>
+                <div class="section-divider"></div>
+                <ul class="area-list animated">
+                    <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Canterbury</li>
+                    <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> East Lyme</li>
+                    <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Colchester</li>
+                    <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Montville</li>
+                    <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Lebanon</li>
+                    <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Windham</li>
+                    <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Hebron</li>
+                    <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Mansfield Center</li>
+                    <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> North Franklin</li>
+                    <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Waterford</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="contact" class="section" role="region" aria-label="Contact section">
+            <div class="container">
+                <h2 class="section-title">Get in Touch</h2>
+                <div class="section-divider"></div>
+                <div class="contact-content">
+                    <div class="contact-info animated">
+                        <h3>Contact Information</h3>
+                        <p>Ready to start your project? Contact us for a free, no-obligation estimate!</p>
+                        <div class="info-item"><i class="fas fa-phone" aria-hidden="true"></i> <a href="tel:(860) 642-8029">(860) 642-8029</a></div>
+                        <div class="info-item"><i class="fas fa-envelope" aria-hidden="true"></i> <a href="mailto:sales@rivera1.com">sales@rivera1.com</a></div>
+                        <div class="info-item"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> 46 Exeter Rd, Lebanon, CT 06254</div>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2994.403914849172!2d-72.24159518457519!3d41.62479697924263!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e6567a5b4b1a1d%3A0x4a9b6b7b1b3b1a1d!2s46%20Exeter%20Rd%2C%20Lebanon%2C%20CT%2006249!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map of Rivera Construction & Hardscapes LLC location"></iframe>
+                    </div>
+                    <form class="contact-form animated" action="https://formspree.io/f/your-form-id" method="POST">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your Name" required aria-required="true">
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" name="email" placeholder="Your Email" required aria-required="true">
+                        <label for="message">Your Message</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Your Message" required aria-required="true"></textarea>
+                        <button type="submit" class="cta-button btn-submit" aria-label="Send message">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer" role="contentinfo">
+        <div class="container">
+            <p>© 2025 Rivera Construction & Hardscapes LLC. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <div id="serviceModal" class="modal" role="dialog" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <span class="close-button" role="button" aria-label="Close modal" tabindex="0">×</span>
+            <h2 id="modal-title"></h2>
+            <p id="modal-description"></p>
+        </div>
+    </div>
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Rivera Construction & Hardscapes LLC",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "46 Exeter Rd",
+            "addressLocality": "Lebanon",
+            "addressRegion": "CT",
+            "postalCode": "06254",
+            "addressCountry": "US"
+        },
+        "telephone": "(860) 642-8029",
+        "email": "sales@rivera1.com",
+        "url": "https://www.rivera1.com",
+        "image": "https://i.imgur.com/rE5a8vK.png",
+        "description": "Rivera Construction & Hardscapes LLC provides expert construction and hardscaping services in Lebanon, CT and surrounding areas, including home renovations, paver patios, roofing, and more.",
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.5",
+            "reviewCount": "10"
+        },
+        "areaServed": [
+            "Canterbury, CT",
+            "East Lyme, CT",
+            "Colchester, CT",
+            "Montville, CT",
+            "Lebanon, CT",
+            "Windham, CT",
+            "Hebron, CT",
+            "Mansfield Center, CT",
+            "North Franklin, CT",
+            "Waterford, CT"
+        ]
+    }
+    </script>
+
+    <script>
+        // Particle effect for hero section
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particlesArray = [];
+        const numberOfParticles = 100;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 5 + 1;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(211, 47, 47, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+                if (particlesArray[i].size <= 0.2) {
+                    particlesArray.splice(i, 1);
+                    i--;
+                    particlesArray.push(new Particle());
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        initParticles();
+        animateParticles();
+
+        // Animate on scroll
+        const animatedElements = document.querySelectorAll('.animated');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        animatedElements.forEach(el => observer.observe(el));
+
+        // Modal script
+        const modal = document.getElementById("serviceModal");
+        const modalTitle = document.getElementById("modal-title");
+        const modalDescription = document.getElementById("modal-description");
+        const serviceCards = document.querySelectorAll(".service-card");
+        const closeButton = document.querySelector(".close-button");
+
+        serviceCards.forEach(card => {
+            card.addEventListener("click", () => {
+                const title = card.getAttribute("data-title");
+                const description = card.getAttribute("data-description");
+                modalTitle.textContent = title;
+                modalDescription.textContent = description;
+                modal.style.display = "flex";
+                modal.focus();
+            });
+
+            card.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    card.click();
+                }
+            });
+        });
+
+        const closeModal = () => {
+            modal.style.display = "none";
+            document.querySelector(".service-card").focus();
+        };
+
+        closeButton.addEventListener("click", closeModal);
+        closeButton.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                closeModal();
+            }
+        });
+
+        window.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && modal.style.display === "flex") {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
